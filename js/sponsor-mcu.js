@@ -175,7 +175,7 @@ var cart;
             cart: cart,
           },
         }).done(function(msg) {
-          console.log(msg);
+          window.location.href = '/?msg=success';
         });
       }
     }
