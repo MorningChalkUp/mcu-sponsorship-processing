@@ -89,6 +89,20 @@ function smcu_sponsorship_purchase() {
         }
 
       } while (!$stop);
+
+      if( have_rows( 'weeks', 'options' ) ) {
+
+        while( have_rows( 'weeks', 'options' ) ) {
+
+          the_row();
+
+          $row_start = get_sub_field( 'start' );
+
+          if( strtotime( $row_start ) ==  strtotime( $item['start'] ) ) {
+            update_sub_field( 'availability', 'purchased' );
+          }
+        }
+      }
     }
   }
 
