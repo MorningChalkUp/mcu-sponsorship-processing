@@ -1,6 +1,4 @@
 var max_weeks = 5; // max weeks to buy at one time
-var discount_percentage = .2; // as decimal
-var discount_weeks = 3; // when discount is granted
 var down_payment = .2; //as decimal
 
 var cart;
