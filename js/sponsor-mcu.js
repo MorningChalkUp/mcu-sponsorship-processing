@@ -43,7 +43,7 @@ var paid = 0;
               <p>${$(this).data('notes')}</p>
               <h5>Add-ons:</h5>
               <ul class="add-ons">
-                <li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="250" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $250</span></li>
+                <li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="175" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $250</span></li>
                 <li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="250" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $250</span></li>
                 <li><input type="checkbox" data-id="${$(this).data('id')}" class="wewrite" data-price="250" id="wewrite-${$(this).data('id')}"/> <label for="wewrite-${$(this).data('id')}">We Write Your Ads</label> <span class="price">+ $250</span></li>
               </ul>
@@ -51,7 +51,10 @@ var paid = 0;
           </div>`;
       }
 
-      $('#cart #list').append(html);
+      if($('.cart-item').length == 0 && $('#checkout').css('opacity') == 0) {
+        $('#checkout').css('opacity',1);
+      }
+      $('#cart #list').append(html).css('opacity',0).fadeTo(150,1);
       
       $('#checkoutButton').data('total', $('#checkoutButton').data('total') + $(this).data('price'));
       $('.total #amt').text($('#checkoutButton').data('total'));
@@ -112,7 +115,13 @@ var paid = 0;
       $('#checkoutButton').data('total', $('#checkoutButton').data('total') - $('.'+remove_id).data('item_total'));
       $('.total #amt').text($('#checkoutButton').data('total'));
       $('#depositButton').data('total', $('#checkoutButton').data('total') * down_payment);
-      $('.'+remove_id).remove();
+
+      if($('.cart-item').length == 1) {
+        $('#checkout').css('opacity',0);
+      }
+      $('.'+remove_id).fadeTo(200, 0, function() {
+        $('.'+remove_id).remove();
+      });
 
       if (week_ids.indexOf($(this).data('id')) != 0) {
         prev_id = week_ids[week_ids.indexOf($(this).data('id')) - 1];
