@@ -23,6 +23,8 @@ function smcu_sponsorship_purchase() {
     $token = $_REQUEST['token'];
     $cart = $_REQUEST['cart']['items'];
     $user = get_userdata( get_current_user_id() );
+    $total = $_REQUEST['total'];
+    $paid = $_REQUEST['paid'];
 
     $args = array(
       'post_author' => $user->ID,
@@ -40,8 +42,8 @@ function smcu_sponsorship_purchase() {
 
     wp_update_post( $title );
 
-    update_field( 'purchase_total', 2100, $purchase );
-    update_field( 'amount_paid', 200, $purchase );
+    update_field( 'purchase_total', $total, $purchase );
+    update_field( 'amount_paid', $paid, $purchase );
     update_field( 'purchaser', $user, $purchase );
     update_field( 'stripe_id', $token, $purchase );
 
@@ -104,6 +106,39 @@ function smcu_sponsorship_purchase() {
         }
       }
     }
+
+    $data = array(
+      'items' => $_REQUEST['cart']['items'],
+      'user' => array(
+        'email' => $user->user_email,
+        'name' => $user->display_name,
+      ),
+      'transaction' => $purchase,
+      'total' => $total,
+      'paid' => $paid,
+    );
+
+    // var_dump($data);
+
+    $url = 'http://data.morningchalkup.com/api/ads/receipt';
+
+    // $r = wp_remote_post( $url, array( 'body' => $data ) );
+
+    $query = http_build_query($data);
+
+    $ch = curl_init();
+
+    curl_setopt($ch,CURLOPT_URL, $url);
+    curl_setopt($ch,CURLOPT_POST, count($data));
+    curl_setopt($ch,CURLOPT_POSTFIELDS, $query);
+
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+
+    $result = curl_exec($ch);
+
+    var_dump($result);
+
+    // var_dump($r);
   }
 
   die();

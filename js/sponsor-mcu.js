@@ -4,6 +4,8 @@ var discount_weeks = 3; // when discount is granted
 var down_payment = .2; //as decimal
 
 var cart;
+var total = 0;
+var paid = 0;
 
 (function($){
   var week_ids = [];
@@ -173,8 +175,11 @@ var cart;
             action: 'smcu_sponsorship_purchase',
             token: token.id,
             cart: cart,
+            total: total,
+            paid: paid,
           },
         }).done(function(msg) {
+          console.log(msg);
           window.location.href = '/?msg=success';
         });
       }
@@ -182,18 +187,22 @@ var cart;
   });
 
   $('#checkoutButton').on('click', function(e) {
+    total = $(this).data('total');
+    paid = $(this).data('total');
     handler.open({
-      name: 'MCU Sponsorship',
-      description: 'Full Price',
+      name: 'Morning Chalk Up Ads',
+      description: 'Pay in Full',
       amount: $(this).data('total') * 100,
     });
     e.preventDefault();
   });
 
   $('#depositButton').on('click', function(e) {
+    total = $('#checkoutButton').data('total');
+    paid = $(this).data('total');
     handler.open({
-      name: 'MCU Sponsorship',
-      description: 'Deposit',
+      name: 'Morning Chalk Up Ads',
+      description: '20% Deposit',
       amount: $(this).data('total') * 100,
     });
     e.preventDefault();
@@ -215,6 +224,7 @@ var cart;
         facebook: $('.'+id+' .facebook').prop('checked'),
         ab: $('.'+id+' .ab').prop('checked'),
         wewrite: $('.'+id+' .wewrite').prop('checked'),
+        cost: $('.'+id).data('item_total'),
       };
 
       cart.items.push(item);
