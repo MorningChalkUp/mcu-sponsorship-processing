@@ -117,7 +117,7 @@ var paid = 0;
         }
       }
 
-      if ($('.cart-item').length < discount_weeks) {
+      if (($('.cart-item').length + 1) == discount_weeks) {
         $.each($('.cart-item'), function(i, val) {
           classes = $(val)[0]['className'];
           class_array = classes.split(' ');
