@@ -10,7 +10,7 @@ var paid = 0;
 (function($){
 
   var week_ids = [];
-  var day_ids = []
+  var day_ids = [];
   
   $.each($('.purchase-checkbox'), function(i, val) {
     if($(val).hasClass('single-day')) {
@@ -30,8 +30,7 @@ var paid = 0;
               <p>${$(this).data('notes')}</p>
               <h5>Add-ons:</h5>
               <ul class="add-ons">
-                <li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="250" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $250</span></li>
-                <li><input type="checkbox" data-id="${$(this).data('id')}" class="wewrite" data-price="250" id="wewrite-${$(this).data('id')}"/> <label for="wewrite-${$(this).data('id')}">We Write Your Ads</label> <span class="price">+ $250</span></li>
+                <li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="125" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $125</span></li>
               </ul>
             </div>
           </div>`;
@@ -43,7 +42,7 @@ var paid = 0;
               <p>${$(this).data('notes')}</p>
               <h5>Add-ons:</h5>
               <ul class="add-ons">
-                <li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="175" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $250</span></li>
+                <li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="175" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $175</span></li>
                 <li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="250" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $250</span></li>
                 <li><input type="checkbox" data-id="${$(this).data('id')}" class="wewrite" data-price="250" id="wewrite-${$(this).data('id')}"/> <label for="wewrite-${$(this).data('id')}">We Write Your Ads</label> <span class="price">+ $250</span></li>
               </ul>
@@ -54,7 +53,7 @@ var paid = 0;
       if($('.cart-item').length == 0 && $('#checkout').css('opacity') == 0) {
         $('#checkout').css('opacity',1);
       }
-      $('#cart #list').append(html).css('opacity',0).fadeTo(150,1);
+      $('#cart #list').append(html);
       
       $('#checkoutButton').data('total', $('#checkoutButton').data('total') + $(this).data('price'));
       $('.total #amt').text($('#checkoutButton').data('total'));
@@ -70,37 +69,6 @@ var paid = 0;
         $('#' + next_id).prop('disabled', true);
       }
 
-      if (($('.cart-item').length - $('.cart-item.single-day').length) == discount_weeks && !$(this).hasClass('single-day')) {
-        $.each($('.cart-item'), function(i, val) {
-          classes = $(val)[0]['className'];
-          class_array = classes.split(' ');
-          id = class_array[1];
-          item = $(`.${id}`);
-
-          discount_price = item.data('price') * (1 - discount_percentage);
-          discount = item.data('price') * discount_percentage;
-
-          $(`.${id} h4 .price`).text(`$${discount_price}`);
-          item.data('item_total', item.data('item_total') - discount);
-
-          $('#checkoutButton').data('total', $('#checkoutButton').data('total') - discount);
-          $('.total #amt').text($('#checkoutButton').data('total'));
-          $('#depositButton').data('total', $('#checkoutButton').data('total') * down_payment);
-        });
-      } else if (($('.cart-item').length - $('.cart-item.single-day').length) > discount_weeks && !$(this).hasClass('single-day')) {
-        id = $(this).data('id');
-        item = $(`.${id}`);
-
-        discount_price = item.data('price') * (1 - discount_percentage);
-        discount = item.data('price') * discount_percentage;
-
-        $(`.${id} h4 .price`).text(`$${discount_price}`);
-        item.data('item_total', item.data('item_total') - discount);
-        
-        $('#checkoutButton').data('total', $('#checkoutButton').data('total') - discount);
-        $('.total #amt').text($('#checkoutButton').data('total'));
-        $('#depositButton').data('total', $('#checkoutButton').data('total') * down_payment);
-      }
       if (($('.cart-item').length - $('.cart-item.single-day').length) == max_weeks ) {
         $.each($('.purchase-checkbox'), function(i, val) {
           if(!$(val).hasClass('single-day')) {
@@ -151,24 +119,6 @@ var paid = 0;
         }
       }
 
-      if ($('.cart-item').length < discount_weeks) {
-        $.each($('.cart-item'), function(i, val) {
-          classes = $(val)[0]['className'];
-          class_array = classes.split(' ');
-          id = class_array[1];
-          item = $(`.${id}`);
-
-          discount_price = item.data('price') * (1 - discount_percentage);
-          discount = item.data('price') * discount_percentage;
-
-          $(`.${id} h4 .price`).text(`$${item.data('price')}`);
-          item.data('item_total', item.data('item_total') + discount);
-
-          $('#checkoutButton').data('total', $('#checkoutButton').data('total') + discount);
-          $('.total #amt').text($('#checkoutButton').data('total'));
-          $('#depositButton').data('total', $('#checkoutButton').data('total') * down_payment);
-        });
-      }
       if ($('.cart-item').length == max_weeks - 1) {
         $.each(week_ids, function(i, val) {
           if(!$('#'+val).prop('checked')) {
