@@ -8,8 +8,10 @@ var total = 0;
 var paid = 0;
 
 (function($){
+
   var week_ids = [];
   var day_ids = []
+  
   $.each($('.purchase-checkbox'), function(i, val) {
     if($(val).hasClass('single-day')) {
       day_ids.push($(val).data('id'));
