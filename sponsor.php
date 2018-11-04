@@ -25,6 +25,8 @@ function smcu_sponsorship_purchase() {
     $user = get_userdata( get_current_user_id() );
     $total = $_REQUEST['total'];
     $paid = $_REQUEST['paid'];
+    $email = $_REQUEST['email'];
+    $name = $_REQUEST['name'];
 
     $args = array(
       'post_author' => $user->ID,
@@ -62,13 +64,13 @@ function smcu_sponsorship_purchase() {
       update_field( 'start', $item['start'], $item_post );
       update_field( 'end', $item['end'], $item_post );
 
-      if( $item['facebook'] == 'true' ) {
+      if( isset( $item['facebook'] ) && $item['facebook'] == 'true' ) {
         update_field( 'facebook_retargeting', true, $item_post );
       }
-      if( $item['ab'] == 'true' ) {
+      if( isset( $item['ab'] ) && $item['ab'] == 'true' ) {
         update_field( 'ab_testing', true, $item_post );
       }
-      if( $item['wewrite'] == 'true' ) {
+      if( isset( $item['wewrite'] ) && $item['wewrite'] == 'true' ) {
         update_field( 'we_write_ads', true, $item_post );
       }
 
@@ -110,8 +112,8 @@ function smcu_sponsorship_purchase() {
     $data = array(
       'items' => $_REQUEST['cart']['items'],
       'user' => array(
-        'email' => $user->user_email,
-        'name' => $user->display_name,
+        'email' => $email,
+        'name' => $name,
       ),
       'transaction' => $purchase,
       'total' => $total,

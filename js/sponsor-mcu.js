@@ -1,6 +1,4 @@
 var max_weeks = 5; // max weeks to buy at one time
-var discount_percentage = .2; // as decimal
-var discount_weeks = 3; // when discount is granted
 var down_payment = .2; //as decimal
 
 var cart;
@@ -8,86 +6,99 @@ var total = 0;
 var paid = 0;
 
 (function($){
+
   var week_ids = [];
+  var day_ids = [];
+  
   $.each($('.purchase-checkbox'), function(i, val) {
-    week_ids.push($(val).data('id'));
+    if($(val).next('label').hasClass('single-day')) {
+      day_ids.push($(val).data('id'));
+    } else {
+      week_ids.push($(val).data('id'));
+    }
   });
 
   $('.purchase-checkbox').change(function() {
-    if ($(this).prop('checked') && $('.cart-item').length < max_weeks) {
-      html = `
-        <div class="cart-item ${$(this).data('id')}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
-          <h4>${$(this).data('range')} <span class="price">$${$(this).data('price')}</span></h4>
-          <div class="inside">
-            <p>${$(this).data('notes')}</p>
-            <h5>Add-ons:</h5>
-            <ul class="add-ons">
-              <li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="250" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $250</span></li>
-              <li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="250" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $250</span></li>
-              <li><input type="checkbox" data-id="${$(this).data('id')}" class="wewrite" data-price="250" id="wewrite-${$(this).data('id')}"/> <label for="wewrite-${$(this).data('id')}">We Write Your Ads</label> <span class="price">+ $250</span></li>
-            </ul>
-          </div>
-        </div>`
+    if ($(this).prop('checked')) {
+      if($(this).next('label').hasClass('single-day')) {
+        html = `
+          <div class="cart-item single-day ${$(this).data('id')}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
+            <h4>${$(this).data('range')} <span class="price">$${$(this).data('price')}</span></h4>
+            <div class="inside">
+              <p>${$(this).data('notes')}</p>
+              <h5>Add-ons:</h5>
+              <ul class="add-ons">
+                <li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="125" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $125</span></li>
+              </ul>
+            </div>
+          </div>`;
+      } else {
+        html = `
+          <div class="cart-item ${$(this).data('id')}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
+            <h4>${$(this).data('range')} <span class="price">$${$(this).data('price')}</span></h4>
+            <div class="inside">
+              <p>${$(this).data('notes')}</p>
+              <h5>Add-ons:</h5>
+              <ul class="add-ons">
+                <li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="175" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $175</span></li>
+                <li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="250" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $250</span></li>
+                <li><input type="checkbox" data-id="${$(this).data('id')}" class="wewrite" data-price="250" id="wewrite-${$(this).data('id')}"/> <label for="wewrite-${$(this).data('id')}">We Write Your Ads</label> <span class="price">+ $250</span></li>
+              </ul>
+            </div>
+          </div>`;
+      }
+
+      if($('.cart-item').length == 0 && $('#checkout').css('opacity') == 0) {
+        $('#checkout').css('opacity',1);
+      }
       $('#cart #list').append(html);
       
       $('#checkoutButton').data('total', $('#checkoutButton').data('total') + $(this).data('price'));
       $('.total #amt').text($('#checkoutButton').data('total'));
       $('#depositButton').data('total', $('#checkoutButton').data('total') * .2);
 
-      if (week_ids.indexOf($(this).data('id')) != 0) {
-        prev_id = week_ids[week_ids.indexOf($(this).data('id')) - 1];
-        $('#' + prev_id).prop('disabled', true);
+      if(!$(this).next('label').hasClass('single-day')) {
+        if (week_ids.indexOf($(this).data('id')) != 0) {
+          prev_id = week_ids[week_ids.indexOf($(this).data('id')) - 1];
+          $('#' + prev_id).prop('disabled', true);
+        }
+
+        if (week_ids.indexOf($(this).data('id')) != (week_ids.length - 1)) {
+          next_id = week_ids[week_ids.indexOf($(this).data('id')) + 1];
+          $('#' + next_id).prop('disabled', true);
+        }
       }
 
-      if (week_ids.indexOf($(this).data('id')) != (week_ids.length - 1)) {
-        next_id = week_ids[week_ids.indexOf($(this).data('id')) + 1];
-        $('#' + next_id).prop('disabled', true);
-      }
-
-      if ($('.cart-item').length == discount_weeks) {
-        $.each($('.cart-item'), function(i, val) {
-          classes = $(val)[0]['className'];
-          class_array = classes.split(' ');
-          id = class_array[1];
-          item = $(`.${id}`);
-
-          discount_price = item.data('price') * (1 - discount_percentage);
-          discount = item.data('price') * discount_percentage;
-
-          $(`.${id} h4 .price`).text(`$${discount_price}`);
-          item.data('item_total', item.data('item_total') - discount);
-
-          $('#checkoutButton').data('total', $('#checkoutButton').data('total') - discount);
-          $('.total #amt').text($('#checkoutButton').data('total'));
-          $('#depositButton').data('total', $('#checkoutButton').data('total') * down_payment);
-        });
-      } else if ($('.cart-item').length > discount_weeks) {
-        id = $(this).data('id');
-        item = $(`.${id}`);
-
-        discount_price = item.data('price') * (1 - discount_percentage);
-        discount = item.data('price') * discount_percentage;
-
-        $(`.${id} h4 .price`).text(`$${discount_price}`);
-        item.data('item_total', item.data('item_total') - discount);
-        
-        $('#checkoutButton').data('total', $('#checkoutButton').data('total') - discount);
-        $('.total #amt').text($('#checkoutButton').data('total'));
-        $('#depositButton').data('total', $('#checkoutButton').data('total') * down_payment);
-      }
-      if ($('.cart-item').length == max_weeks) {
+      if (($('.cart-item').length - $('.cart-item.single-day').length) == max_weeks ) {
         $.each($('.purchase-checkbox'), function(i, val) {
-          if(!$(val).prop('checked')) {
-            $(val).prop('disabled', true);
+          if(!$(val).next('label').hasClass('single-day')) {
+            if(!$(val).prop('checked')) {
+              $(val).prop('disabled', true);
+            }
           }
         });
       }
+      /*if (($('.cart-item.single-day').length - $('.cart-item').length) == max_weeks ) {
+        $.each($('.purchase-checkbox'), function(i, val) {
+          if($(val).next('label').hasClass('single-day')) {
+            if(!$(val).prop('checked')) {
+              $(val).prop('disabled', true);
+            }
+          }
+        });
+      }*/
     } else if (!$(this).prop('checked')) {
       remove_id = $(this).data('id');
       $('#checkoutButton').data('total', $('#checkoutButton').data('total') - $('.'+remove_id).data('item_total'));
       $('.total #amt').text($('#checkoutButton').data('total'));
       $('#depositButton').data('total', $('#checkoutButton').data('total') * down_payment);
-      $('.'+remove_id).remove();
+
+      if($('.cart-item').length == 1) {
+        $('#checkout').css('opacity',0);
+      }
+      $('.'+remove_id).fadeTo(200, 0, function() {
+        $('.'+remove_id).remove();
+      });
 
       if (week_ids.indexOf($(this).data('id')) != 0) {
         prev_id = week_ids[week_ids.indexOf($(this).data('id')) - 1];
@@ -117,25 +128,7 @@ var paid = 0;
         }
       }
 
-      if (($('.cart-item').length + 1) == discount_weeks) {
-        $.each($('.cart-item'), function(i, val) {
-          classes = $(val)[0]['className'];
-          class_array = classes.split(' ');
-          id = class_array[1];
-          item = $(`.${id}`);
-
-          discount_price = item.data('price') * (1 - discount_percentage);
-          discount = item.data('price') * discount_percentage;
-
-          $(`.${id} h4 .price`).text(`$${item.data('price')}`);
-          item.data('item_total', item.data('item_total') + discount);
-
-          $('#checkoutButton').data('total', $('#checkoutButton').data('total') + discount);
-          $('.total #amt').text($('#checkoutButton').data('total'));
-          $('#depositButton').data('total', $('#checkoutButton').data('total') * down_payment);
-        });
-      }
-      if ($('.cart-item').length == max_weeks - 1) {
+      if (($('.cart-item').length - $('.cart-item.single-day').length) == max_weeks - 1) {
         $.each(week_ids, function(i, val) {
           if(!$('#'+val).prop('checked')) {
             if($('#'+val).data('status') == 'available') {
@@ -146,6 +139,17 @@ var paid = 0;
           }
         });
       }
+      /*if (($('.cart-item.single-day').length - $('.cart-item').length) == max_weeks - 1) {
+        $.each(day_ids, function(i, val) {
+          if(!$('#'+val).prop('checked')) {
+            if($('#'+val).data('status') == 'available') {
+              if(((i - 1) >= 0 && !$('#' + day_ids[i - 1]).prop('checked')) && (i < day_ids.length && !$('#' + day_ids[i + 1]).prop('checked'))) {
+                $('#'+val).prop('disabled', false);
+              }
+            }
+          }
+        });
+      }*/
     }
     updateCart();
   });
@@ -177,6 +181,8 @@ var paid = 0;
             cart: cart,
             total: total,
             paid: paid,
+            email: token.email,
+            name: token.card.name,
           },
         }).done(function(msg) {
           console.log(msg);
