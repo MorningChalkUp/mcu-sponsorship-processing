@@ -11,7 +11,7 @@ var paid = 0;
   var day_ids = [];
   
   $.each($('.purchase-checkbox'), function(i, val) {
-    if($(val).hasClass('single-day')) {
+    if($(val).next('label').hasClass('single-day')) {
       day_ids.push($(val).data('id'));
     } else {
       week_ids.push($(val).data('id'));
@@ -19,8 +19,8 @@ var paid = 0;
   });
 
   $('.purchase-checkbox').change(function() {
-    if ($(this).prop('checked') && $('.cart-item').length < max_weeks) {
-      if($(this).hasClass('single-day')) {
+    if ($(this).prop('checked')) {
+      if($(this).next('label').hasClass('single-day')) {
         html = `
           <div class="cart-item single-day ${$(this).data('id')}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
             <h4>${$(this).data('range')} <span class="price">$${$(this).data('price')}</span></h4>
@@ -57,25 +57,36 @@ var paid = 0;
       $('.total #amt').text($('#checkoutButton').data('total'));
       $('#depositButton').data('total', $('#checkoutButton').data('total') * .2);
 
-      if (week_ids.indexOf($(this).data('id')) != 0) {
-        prev_id = week_ids[week_ids.indexOf($(this).data('id')) - 1];
-        $('#' + prev_id).prop('disabled', true);
-      }
+      if(!$(this).next('label').hasClass('single-day')) {
+        if (week_ids.indexOf($(this).data('id')) != 0) {
+          prev_id = week_ids[week_ids.indexOf($(this).data('id')) - 1];
+          $('#' + prev_id).prop('disabled', true);
+        }
 
-      if (week_ids.indexOf($(this).data('id')) != (week_ids.length - 1)) {
-        next_id = week_ids[week_ids.indexOf($(this).data('id')) + 1];
-        $('#' + next_id).prop('disabled', true);
+        if (week_ids.indexOf($(this).data('id')) != (week_ids.length - 1)) {
+          next_id = week_ids[week_ids.indexOf($(this).data('id')) + 1];
+          $('#' + next_id).prop('disabled', true);
+        }
       }
 
       if (($('.cart-item').length - $('.cart-item.single-day').length) == max_weeks ) {
         $.each($('.purchase-checkbox'), function(i, val) {
-          if(!$(val).hasClass('single-day')) {
+          if(!$(val).next('label').hasClass('single-day')) {
             if(!$(val).prop('checked')) {
               $(val).prop('disabled', true);
             }
           }
         });
       }
+      /*if (($('.cart-item.single-day').length - $('.cart-item').length) == max_weeks ) {
+        $.each($('.purchase-checkbox'), function(i, val) {
+          if($(val).next('label').hasClass('single-day')) {
+            if(!$(val).prop('checked')) {
+              $(val).prop('disabled', true);
+            }
+          }
+        });
+      }*/
     } else if (!$(this).prop('checked')) {
       remove_id = $(this).data('id');
       $('#checkoutButton').data('total', $('#checkoutButton').data('total') - $('.'+remove_id).data('item_total'));
@@ -117,7 +128,7 @@ var paid = 0;
         }
       }
 
-      if ($('.cart-item').length == max_weeks - 1) {
+      if (($('.cart-item').length - $('.cart-item.single-day').length) == max_weeks - 1) {
         $.each(week_ids, function(i, val) {
           if(!$('#'+val).prop('checked')) {
             if($('#'+val).data('status') == 'available') {
@@ -128,6 +139,17 @@ var paid = 0;
           }
         });
       }
+      /*if (($('.cart-item.single-day').length - $('.cart-item').length) == max_weeks - 1) {
+        $.each(day_ids, function(i, val) {
+          if(!$('#'+val).prop('checked')) {
+            if($('#'+val).data('status') == 'available') {
+              if(((i - 1) >= 0 && !$('#' + day_ids[i - 1]).prop('checked')) && (i < day_ids.length && !$('#' + day_ids[i + 1]).prop('checked'))) {
+                $('#'+val).prop('disabled', false);
+              }
+            }
+          }
+        });
+      }*/
     }
     updateCart();
   });
@@ -159,6 +181,8 @@ var paid = 0;
             cart: cart,
             total: total,
             paid: paid,
+            email: token.email,
+            name: token.card.name,
           },
         }).done(function(msg) {
           console.log(msg);
