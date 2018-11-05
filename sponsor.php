@@ -49,8 +49,6 @@ function smcu_sponsorship_purchase() {
         'source' => $token,
     ]);
 
-    var_dump($charge);
-
     $args = array(
       'post_author' => $user->ID,
       'post_title' => $user->user_login . ' Purchase',
@@ -170,9 +168,7 @@ function smcu_sponsorship_purchase() {
 
     $result = curl_exec($ch);
 
-    var_dump($result);
-
-    // var_dump($r);
+    echo 'Success';
   }
 
   die();

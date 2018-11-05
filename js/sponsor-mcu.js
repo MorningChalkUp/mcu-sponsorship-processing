@@ -13,6 +13,8 @@ var purchased_day_count = 0;
 
 (function($){
 
+  var public = $('#cart').data('key');
+
   $.each($('.purchase-checkbox'), function(i, val) {
     if($(val).next('label').hasClass('single-day')) {
       day_ids.push($(val).data('id'));
@@ -180,7 +182,7 @@ var purchased_day_count = 0;
   });
 
   var handler = StripeCheckout.configure({
-    key: 'pk_test_Ei950K9xue0tIKAgJL60Mh31',
+    key: public,
     image: window.location.origin + '/wp-content/themes/mcu-analytics-theme/resources/images/square-blue.png',
     locale: 'auto',
     token: function(token) {
