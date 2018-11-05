@@ -35,6 +35,7 @@ function smcu_sponsorship_purchase() {
       'post_status' => 'publish',
     );
 
+    // Purchase
     $purchase = wp_insert_post( $args );
 
     $title = array(
@@ -49,6 +50,7 @@ function smcu_sponsorship_purchase() {
     update_field( 'purchaser', $user, $purchase );
     update_field( 'stripe_id', $token, $purchase );
 
+    // Item
     foreach ( $cart as $item ) {
       $args = array(
         'post_author' => $user->ID,
@@ -104,6 +106,7 @@ function smcu_sponsorship_purchase() {
 
           if( strtotime( $row_start ) ==  strtotime( $item['start'] ) ) {
             update_sub_field( 'availability', 'purchased' );
+            update_sub_field( 'purchaser', $user );
           }
         }
       }
