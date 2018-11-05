@@ -180,7 +180,7 @@ var purchased_day_count = 0;
   });
 
   var handler = StripeCheckout.configure({
-    key: 'pk_live_1ifgCgToYfxzfGj2JU8JtWSY',
+    key: 'pk_test_Ei950K9xue0tIKAgJL60Mh31',
     image: window.location.origin + '/wp-content/themes/mcu-analytics-theme/resources/images/square-blue.png',
     locale: 'auto',
     token: function(token) {

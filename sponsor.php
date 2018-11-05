@@ -9,6 +9,8 @@
  * License: GPL3
  */
 
+require_once('stripe/init.php');
+
 add_action( 'wp_enqueue_scripts', 'smcu_enqueue_scripts' );
 function smcu_enqueue_scripts() {
   if ( is_page_template( 'templates/page-sponsor.php' ) ) {
@@ -28,6 +30,26 @@ function smcu_sponsorship_purchase() {
     $paid = $_REQUEST['paid'];
     $email = $_REQUEST['email'];
     $name = $_REQUEST['name'];
+
+    if( get_field( 'mode', 'options') == 'test' ) {
+      $secret = get_field( 'stripe_test_secret_key', 'options' );
+    } elseif ( get_field( 'mode', 'options') == 'live' ) {
+      $secret = get_field( 'stripe_live_secret_key', 'options' );
+    } else {
+      echo 'No Key Found';
+      die();
+    }
+
+    \Stripe\Stripe::setApiKey($secret);
+
+    $charge = \Stripe\Charge::create([
+        'amount' => ($paid * 100),
+        'currency' => 'usd',
+        'description' => 'Mornign Chalk Up ',
+        'source' => $token,
+    ]);
+
+    var_dump($charge);
 
     $args = array(
       'post_author' => $user->ID,
@@ -49,7 +71,7 @@ function smcu_sponsorship_purchase() {
     update_field( 'purchase_total', $total, $purchase );
     update_field( 'amount_paid', $paid, $purchase );
     update_field( 'purchaser', $user, $purchase );
-    update_field( 'stripe_id', $token, $purchase );
+    update_field( 'stripe_id', $charge->id, $purchase );
 
     // Item
     foreach ( $cart as $item ) {
