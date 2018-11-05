@@ -57,30 +57,41 @@ var purchased_day_count = 0;
   $('.purchase-checkbox').change(function() {
     if ($(this).prop('checked')) {
       if($(this).next('label').hasClass('single-day')) {
-        html = `<div class="cart-item single-day ${$(this).data('id')}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
-            <h4>${$(this).data('range')} <span class="price">$${$(this).data('price')}</span></h4>
-            <div class="inside">
-              <p>${$(this).data('notes')}</p>
-              <h5>Add-ons:</h5>
-              <ul class="add-ons">
-                <li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="125" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $125</span></li>
-              </ul>
-            </div>
-          </div>`;
+        single = 'single-day';
       } else {
-        html = `<div class="cart-item ${$(this).data('id')}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
-            <h4>${$(this).data('range')} <span class="price">$${$(this).data('price')}</span></h4>
-            <div class="inside">
-              <p>${$(this).data('notes')}</p>
-              <h5>Add-ons:</h5>
-              <ul class="add-ons">
-                <li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="175" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $175</span></li>
-                <li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="250" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $250</span></li>
-                <li><input type="checkbox" data-id="${$(this).data('id')}" class="wewrite" data-price="250" id="wewrite-${$(this).data('id')}"/> <label for="wewrite-${$(this).data('id')}">We Write Your Ads</label> <span class="price">+ $250</span></li>
-              </ul>
-            </div>
-          </div>`;
+        single = '';
       }
+
+      html = `<div class="cart-item ${$(this).data('id')} ${single}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
+        <h4>${$(this).data('range')} <span class="price">$${$(this).data('price')}</span></h4>
+        <div class="inside">
+          <p>${$(this).data('notes')}</p>`;
+
+          if($(this).data('facebook') != 'false' || $(this).data('ab') != 'false' || $(this).data('wewrite') != 'false') {
+
+            html += `<h5>Add-ons:</h5>
+              <ul class="add-ons">`;
+
+            if($(this).data('facebook')) {
+              html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="175" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $175</span></li>`;
+            }
+
+            if($(this).data('ab')) {
+              if(single == 'single-day') {
+                html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="125" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $125</span></li>`;
+              } else {
+                html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="250" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $250</span></li>`;
+              }
+            }
+
+            if($(this).data('wewrite')) { 
+              html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="wewrite" data-price="250" id="wewrite-${$(this).data('id')}"/> <label for="wewrite-${$(this).data('id')}">We Write Your Ads</label> <span class="price">+ $250</span></li>`;
+            }
+          html += `</ul>`;
+          }
+          
+        html += `</div>
+      </div>`;
 
       if($('.cart-item').length == 0 && $('#checkout').css('opacity') == 0) {
         $('#checkout').css('opacity',1);
