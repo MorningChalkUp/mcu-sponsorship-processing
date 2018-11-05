@@ -1,7 +1,7 @@
 var max_weeks = 5; // max weeks to buy at one time
 var down_payment = .2; //as decimal
 
-var cart;
+var cart = {items: []};
 var total = 0;
 var paid = 0;
 
@@ -220,7 +220,7 @@ var paid = 0;
 
   function updateCart() {
     cart = {items: []};
-    $.each($('.cart-item'), function(i,val) {
+    $.each($('.purchase-checkbox:checked'), function(i,val) {
       id = $(val).data('id');
 
       item = {
