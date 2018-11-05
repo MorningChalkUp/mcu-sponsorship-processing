@@ -1,5 +1,5 @@
 var max_weeks = 5; // max weeks to buy at one time
-var down_payment = .2; //as decimal
+var down_payment = 0.2; //as decimal
 
 var cart = {items: []};
 var total = 0;
@@ -12,7 +12,7 @@ var purchased_week_count = 0;
 var purchased_day_count = 0;
 
 (function($){
-  
+
   $.each($('.purchase-checkbox'), function(i, val) {
     if($(val).next('label').hasClass('single-day')) {
       day_ids.push($(val).data('id'));
@@ -31,18 +31,20 @@ var purchased_day_count = 0;
   });
 
   if (purchased_week_count >= max_weeks) {
-    if(!$(val).next('label').hasClass('single-day')) {
-      $(val).prop('disabled', true);
-    }
+    $.each($('.purchase-checkbox'), function(i, val) {
+      if(!$(val).next('label').hasClass('single-day')) {
+        $(val).prop('disabled', true);
+      }
+    });
   } else {
     $.each(purchsed_week_ids, function(i, val) {
       if(!$('#'+val).next('label').hasClass('single-day')) {
-        if (week_ids.indexOf($('#'+val).data('id')) != 0) {
+        if (week_ids.indexOf($('#'+val).data('id')) !== 0) {
           prev_id = week_ids[week_ids.indexOf($('#'+val).data('id')) - 1];
           $('#' + prev_id).prop('disabled', true);
         }
 
-        if (week_ids.indexOf($('#'+val).data('id')) != (week_ids.length - 1)) {
+        if (week_ids.indexOf($('#'+val).data('id')) !== (week_ids.length - 1)) {
           next_id = week_ids[week_ids.indexOf($('#'+val).data('id')) + 1];
           $('#' + next_id).prop('disabled', true);
         }
@@ -53,8 +55,7 @@ var purchased_day_count = 0;
   $('.purchase-checkbox').change(function() {
     if ($(this).prop('checked')) {
       if($(this).next('label').hasClass('single-day')) {
-        html = `
-          <div class="cart-item single-day ${$(this).data('id')}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
+        html = `<div class="cart-item single-day ${$(this).data('id')}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
             <h4>${$(this).data('range')} <span class="price">$${$(this).data('price')}</span></h4>
             <div class="inside">
               <p>${$(this).data('notes')}</p>
@@ -65,8 +66,7 @@ var purchased_day_count = 0;
             </div>
           </div>`;
       } else {
-        html = `
-          <div class="cart-item ${$(this).data('id')}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
+        html = `<div class="cart-item ${$(this).data('id')}" data-price="${$(this).data('price')}" data-item_total="${$(this).data('price')}" data-id="${$(this).data('id')}">
             <h4>${$(this).data('range')} <span class="price">$${$(this).data('price')}</span></h4>
             <div class="inside">
               <p>${$(this).data('notes')}</p>
@@ -90,18 +90,18 @@ var purchased_day_count = 0;
       $('#depositButton').data('total', $('#checkoutButton').data('total') * .2);
 
       if(!$(this).next('label').hasClass('single-day')) {
-        if (week_ids.indexOf($(this).data('id')) != 0) {
+        if (week_ids.indexOf($(this).data('id')) !== 0) {
           prev_id = week_ids[week_ids.indexOf($(this).data('id')) - 1];
           $('#' + prev_id).prop('disabled', true);
         }
 
-        if (week_ids.indexOf($(this).data('id')) != (week_ids.length - 1)) {
+        if (week_ids.indexOf($(this).data('id')) !== (week_ids.length - 1)) {
           next_id = week_ids[week_ids.indexOf($(this).data('id')) + 1];
           $('#' + next_id).prop('disabled', true);
         }
       }
 
-      if (($('.cart-item').length - $('.cart-item.single-day').length) == max_weeks ) {
+      if (($('.cart-item').length - $('.cart-item.single-day').length) == (max_weeks - purchased_week_count) ) {
         $.each($('.purchase-checkbox'), function(i, val) {
           if(!$(val).next('label').hasClass('single-day')) {
             if(!$(val).prop('checked')) {
@@ -123,12 +123,12 @@ var purchased_day_count = 0;
         $('.'+remove_id).remove();
       });
 
-      if (week_ids.indexOf($(this).data('id')) != 0) {
+      if (week_ids.indexOf($(this).data('id')) !== 0) {
         prev_id = week_ids[week_ids.indexOf($(this).data('id')) - 1];
         if ($('#' + prev_id).data('status') == 'available') {
           if(week_ids.indexOf($(this).data('id')) - 2 >= 0) {
             second_prev_id = week_ids[week_ids.indexOf($(this).data('id')) - 2];
-            if (!$('#' + second_prev_id).prop('checked')) {
+            if (!$('#' + second_prev_id).prop('checked') && !$('#' + second_prev_id).hasClass('purchaser')) {
               $('#' + prev_id).prop('disabled', false);
             }
           } else {
@@ -137,12 +137,12 @@ var purchased_day_count = 0;
         }
       }
 
-      if (week_ids.indexOf($(this).data('id')) != (week_ids.length - 1)) {
+      if (week_ids.indexOf($(this).data('id')) !== (week_ids.length - 1)) {
         next_id = week_ids[week_ids.indexOf($(this).data('id')) + 1];
         if ($('#' + next_id).data('status') == 'available') {
           if(week_ids.indexOf($(this).data('id')) + 2 < week_ids.length) {
             second_next_id = week_ids[week_ids.indexOf($(this).data('id')) + 2];
-            if (!$('#' + second_next_id).prop('checked')) {
+            if (!$('#' + second_next_id).prop('checked') && !$('#' + second_next_id).hasClass('purchaser')) {
               $('#' + next_id).prop('disabled', false);
             }
           } else {
@@ -151,11 +151,11 @@ var purchased_day_count = 0;
         }
       }
 
-      if (($('.cart-item').length - $('.cart-item.single-day').length) == max_weeks - 1) {
+      if (($('.cart-item').length - $('.cart-item.single-day').length) == (max_weeks - purchased_week_count)) {
         $.each(week_ids, function(i, val) {
           if(!$('#'+val).prop('checked')) {
             if($('#'+val).data('status') == 'available') {
-              if(((i - 1) >= 0 && !$('#' + week_ids[i - 1]).prop('checked')) && (i < week_ids.length && !$('#' + week_ids[i + 1]).prop('checked'))) {
+              if((i == 0 && !$('#' + week_ids[i + 1]).prop('checked') && !$('#' + week_ids[i + 1]).hasClass('purchaser')) || ((i - 1) >= 0 && !$('#' + week_ids[i - 1]).prop('checked') && !$('#' + week_ids[i - 1]).hasClass('purchaser')) && (i < week_ids.length && !$('#' + week_ids[i + 1]).prop('checked') && !$('#' + week_ids[i + 1]).hasClass('purchaser'))) {
                 $('#'+val).prop('disabled', false);
               }
             }
@@ -184,7 +184,7 @@ var purchased_day_count = 0;
     image: window.location.origin + '/wp-content/themes/mcu-analytics-theme/resources/images/square-blue.png',
     locale: 'auto',
     token: function(token) {
-      if(token.id != null) {
+      if(token.id !== null) {
         $.ajax({
           url: '/wp-admin/admin-ajax.php',
           data: {
