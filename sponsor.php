@@ -3,7 +3,7 @@
  * Plugin Name: Sponsor Morning Chalk Up
  * Description: This plugin manages the sponsorship process for MCU
  * Plugin URI: https://github.com/MorningChalkUp/mcu-sponsorship-processing
- * Version: 0.8
+ * Version: 1.0
  * Author: Eric Sherred
  * Author URI: https://ericsherred.com
  * License: GPL3
