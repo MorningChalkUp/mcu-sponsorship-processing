@@ -16,6 +16,7 @@ var paid = 0;
     } else {
       week_ids.push($(val).data('id'));
     }
+    $('.purchase-checkbox').prop('checked', false);
   });
 
   $('.purchase-checkbox').change(function() {
