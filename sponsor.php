@@ -109,11 +109,17 @@ function smcu_sponsorship_purchase() {
       }
     }
 
+    if (!filter_var($name, FILTER_VALIDATE_EMAIL)) {
+      $receipt_name = $name;
+    } else {
+      $receipt_name = $user->display_name;
+    }
+
     $data = array(
       'items' => $_REQUEST['cart']['items'],
       'user' => array(
         'email' => $email,
-        'name' => $name,
+        'name' => $receipt_name,
       ),
       'transaction' => $purchase,
       'total' => $total,

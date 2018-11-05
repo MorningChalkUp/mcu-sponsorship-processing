@@ -200,6 +200,7 @@ var paid = 0;
       name: 'Morning Chalk Up Ads',
       description: 'Pay in Full',
       amount: $(this).data('total') * 100,
+      email: $('#cart').data('user'),
     });
     e.preventDefault();
   });
@@ -211,6 +212,7 @@ var paid = 0;
       name: 'Morning Chalk Up Ads',
       description: '20% Deposit',
       amount: $(this).data('total') * 100,
+      email: $('#cart').data('user'),
     });
     e.preventDefault();
   });
