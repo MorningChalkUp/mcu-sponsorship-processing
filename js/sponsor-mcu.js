@@ -73,19 +73,19 @@ var purchased_day_count = 0;
               <ul class="add-ons">`;
 
             if($(this).data('facebook')) {
-              html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="175" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $175</span></li>`;
+              html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="175" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}" data-tooltip="Facebook Retargeting: Access Morning Chalk Up readers on Facebook so they see your ads in their newsfeed too.">Facebook Retargeting</label> <span class="price">+ $175</span></li>`;
             }
 
             if($(this).data('ab')) {
               if(single == 'single-day') {
-                html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="125" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $125</span></li>`;
+                html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="125" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}" data-tooltip="A/B Testing: Put your ad copy to the test and see which one performs the best.">A/B Testing</label> <span class="price">+ $125</span></li>`;
               } else {
-                html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="250" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}">A/B Testing</label> <span class="price">+ $250</span></li>`;
+                html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="ab" data-price="250" id="ab-${$(this).data('id')}"/> <label for="ab-${$(this).data('id')}" data-tooltip="A/B Testing: Put your ad copy to the test and see which one performs the best.">A/B Testing</label> <span class="price">+ $250</span></li>`;
               }
             }
 
             if($(this).data('wewrite')) { 
-              html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="wewrite" data-price="250" id="wewrite-${$(this).data('id')}"/> <label for="wewrite-${$(this).data('id')}">We Write Your Ads</label> <span class="price">+ $250</span></li>`;
+              html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="wewrite" data-price="250" id="wewrite-${$(this).data('id')}"/> <label for="wewrite-${$(this).data('id')}" data-tooltip="We Write Your Ads: Let our team wordsmith your ads for you.">We Write Your Ads</label> <span class="price">+ $250</span></li>`;
             }
           html += `</ul>`;
           }
