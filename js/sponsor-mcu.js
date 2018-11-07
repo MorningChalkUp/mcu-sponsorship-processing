@@ -1,4 +1,4 @@
-var max_weeks = 5; // max weeks to buy at one time
+var max_weeks = 8; // max weeks to buy at one time
 var down_payment = 0.2; //as decimal
 
 var cart = {items: []};
