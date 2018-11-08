@@ -73,7 +73,7 @@ var purchased_day_count = 0;
               <ul class="add-ons">`;
 
             if($(this).data('facebook')) {
-              html += `<li data-tooltip="Facebook Retargeting: Access Morning Chalk Up readers on Facebook so they see your ads in their newsfeed too."><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="175" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $175</span></li>`;
+              html += `<li><input type="checkbox" data-id="${$(this).data('id')}" class="facebook" data-price="175" id="facebook-${$(this).data('id')}"/> <label for="facebook-${$(this).data('id')}">Facebook Retargeting</label> <span class="price">+ $175</span></li>`;
             }
 
             if($(this).data('ab')) {
