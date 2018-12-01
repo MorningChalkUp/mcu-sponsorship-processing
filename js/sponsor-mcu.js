@@ -210,8 +210,12 @@ var purchased_day_count = 0;
             name: token.card.name,
           },
         }).done(function(msg) {
-          console.log(msg);
-          window.location.href = '/?msg=success';
+          res = JSON.parse(msg);
+          if (res.network_status != 'approved_by_network') {
+            window.location.href = '?r=f&msg=' + res.reason;
+          } else {
+            window.location.href = '/?r=s';
+          }
         });
       }
     }
