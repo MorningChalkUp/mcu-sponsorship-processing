@@ -17,7 +17,7 @@ function smcu_enqueue_scripts() {
     wp_enqueue_script( 'stripe-checkout', 'https://checkout.stripe.com/checkout.js', null, null, true );
     wp_enqueue_script( 'sponsor-mcu',  plugins_url( 'js/sponsor-mcu.js', __FILE__ ), array('jquery', 'stripe-checkout'), null, true );
   }
-  if ( is_singular( 'purchased_item' ) ) {
+  if ( is_singular( array( 'purchased_item', 'purchase' ) ) ) {
     wp_enqueue_script( 'stripe-checkout', 'https://checkout.stripe.com/checkout.js', null, null, true );
     wp_enqueue_script( 'balance-mcu',  plugins_url( 'js/balance-mcu.js', __FILE__ ), array('jquery', 'stripe-checkout'), null, true );
   }
