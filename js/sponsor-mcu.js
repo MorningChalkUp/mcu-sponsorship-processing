@@ -211,7 +211,9 @@ var purchased_day_count = 0;
           },
         }).done(function(msg) {
           res = JSON.parse(msg);
-          if (res.network_status != 'approved_by_network') {
+          if (res.error) {
+            window.location.href = '?r=f&msg=' + res.error;
+          } else if (res.network_status != 'approved_by_network') {
             window.location.href = '?r=f&msg=' + res.reason;
           } else {
             window.location.href = '/?r=s';

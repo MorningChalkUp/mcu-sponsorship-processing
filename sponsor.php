@@ -35,6 +35,22 @@ function smcu_sponsorship_purchase() {
     $email = $_REQUEST['email'];
     $name = $_REQUEST['name'];
 
+    foreach ( $cart as $item ) {
+      if( have_rows( 'weeks', 'options' ) ) {
+        while( have_rows( 'weeks', 'options' ) ) {
+          the_row();
+          $row_start = get_sub_field( 'start' );
+          if( strtotime( $row_start ) ==  strtotime( $item['start'] ) ) {
+            if(get_sub_field('availability') != 'available') {
+              echo json_encode(array('error' => 'One or more dates are now unavailable'));
+              exit;
+            }
+          }
+        }
+      }
+    }
+
+
     if( get_field( 'mode', 'options') == 'test' ) {
       $secret = get_field( 'stripe_test_secret_key', 'options' );
     } elseif ( get_field( 'mode', 'options') == 'live' ) {
