@@ -79,7 +79,7 @@ function smcu_sponsorship_purchase() {
     } else {
       $args = array(
         'post_author' => $user->ID,
-        'post_title' => $user->user_login . ' Purchase',
+        'post_title' => $user->display_name . ' Purchase',
         'post_type' => 'purchase',
         'post_status' => 'publish',
       );
@@ -89,7 +89,7 @@ function smcu_sponsorship_purchase() {
 
       $title = array(
         'ID' => $purchase,
-        'post_title' => $user->user_login . ' Purchase: ' . $purchase,
+        'post_title' => $user->display_name . ' Purchase: ' . $purchase,
       );
 
       wp_update_post( $title );
@@ -112,8 +112,8 @@ function smcu_sponsorship_purchase() {
 
         update_field( 'purchaser', $user, $item_post );
         update_field( 'purchase_id', $purchase, $item_post );
-        update_field( 'start', $item['start'], $item_post );
-        update_field( 'end', $item['end'], $item_post );
+        update_field( 'start', date('Ymd',strtotime($item['start'])), $item_post );
+        update_field( 'end', date('Ymd',strtotime($item['end'])), $item_post );
 
         if( isset( $item['facebook'] ) && $item['facebook'] == 'true' ) {
           update_field( 'facebook_retargeting', true, $item_post );
@@ -125,8 +125,8 @@ function smcu_sponsorship_purchase() {
           update_field( 'we_write_ads', true, $item_post );
         }
 
-        $curr = $item['start'];
-        $end = $item['end'];
+        $curr = date('Ymd',strtotime($item['start']));
+        $end = date('Ymd',strtotime($item['end']));
         $stop = false;
 
         do {
@@ -140,7 +140,7 @@ function smcu_sponsorship_purchase() {
           if ($curr == $end) {
             $stop = true;
           } else {
-            $curr = date('n/j/Y', strtotime("+1 day", strtotime($curr)));
+            $curr = date('Ymd', strtotime("+1 day", strtotime($curr)));
           }
 
         } while (!$stop);
@@ -176,7 +176,7 @@ function smcu_sponsorship_purchase() {
         'transaction' => $purchase,
         'total' => $total,
         'paid' => $paid,
-      );
+			);
 
       $url = 'http://data.morningchalkup.com/api/ads/receipt';
 
@@ -243,14 +243,14 @@ function smcu_link_sponsorship_purchase() {
         'source' => $token,
     ]);
 
-    echo json_encode($charge->outcome);
-
+    
     if($charge->outcome->network_status != 'approved_by_network') {
+      echo json_encode($charge->outcome);
       exit;
     } else {
       $args = array(
         'post_author' => $user->ID,
-        'post_title' => $user->user_login . ' Sponsored Link Purchase',
+        'post_title' => $user->display_name . ' Sponsored Link Purchase',
         'post_type' => 'purchase',
         'post_status' => 'publish',
       );
@@ -260,7 +260,7 @@ function smcu_link_sponsorship_purchase() {
 
       $title = array(
         'ID' => $purchase,
-        'post_title' => $user->user_login . ' Sponsored Link Purchase: ' . $purchase,
+        'post_title' => $user->display_name . ' Sponsored Link Purchase: ' . $purchase,
       );
 
       wp_update_post( $title );
@@ -305,8 +305,6 @@ function smcu_link_sponsorship_purchase() {
         'total' => $total,
         'paid' => $paid,
       );
-
-      $data['send_admin'] = false;
 
       $url = 'http://data.morningchalkup.com/api/ads/receipt';
 
@@ -356,9 +354,12 @@ function smcu_sponsorship_balance() {
       'source' => $token,
     ]);
     
-    echo json_encode($charge->outcome);
-
-    if($charge->outcome->network_status != 'approved_by_network') {
+    
+    if($charge->error) {
+      echo json_encode($charge);
+      exit;
+    } elseif($charge->outcome->network_status != 'approved_by_network') {
+      echo json_encode($charge->outcome);
       exit;
     } else {
       $updated_total = $paid + get_field('amount_paid', $purchase);

@@ -171,13 +171,16 @@ var purchased_link_count = 0;
                         name: token.card.name,
                     },
                 }).done(function(msg) {
-                    res = JSON.parse(msg);
-                    if (res.error) {
-                        window.location.href = '?r=f&msg=' + res.error;
-                    } else if (res.network_status != 'approved_by_network') {
-                        window.location.href = '?r=f&msg=' + res.reason;
+                    if (msg != '') {
+                        res = JSON.parse(msg);
+                        if (res.error.message != '') {
+                            window.location.href = '?r=f&msg=' + res.error.message;
+                        }
+                        if (res.network_status != 'approved_by_network') {
+                            window.location.href = '?r=f&msg=' + res.reason;
+                        }
                     } else {
-                        window.location.href = '/?r=s';
+                        window.location.href = '?r=s';
                     }
                 });
             }
