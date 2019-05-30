@@ -323,40 +323,33 @@ function smcu_link_sponsorship_purchase() {
       $result = curl_exec($ch);
 
       foreach ( $cart as $item ) {
-        if( have_rows( 'links', 'options' ) ) {
-          while( have_rows( 'links', 'options' ) ) {
-            the_row();
-            if( strtotime( get_sub_field( 'day' ) ) ==  strtotime( $item['start'] ) ) {
-              $link = array(
-                'user' => array(
-                  'email' => $email,
-                  'name' => $receipt_name,
-                ),
-                'ad_date' => strtotime( $item['start'] ),
-              );
-              
-              $url = 'http://data.morningchalkup.com/api/ads/reminder/link';
+        $link = array(
+          'user' => array(
+            'email' => $email,
+            'name' => $receipt_name,
+          ),
+          'ad_date' => strtotime( $item['start'] ),
+        );
+        
+        $url = 'http://data.morningchalkup.com/api/ads/reminder/link';
 
-              $query = http_build_query($link);
+        $query = http_build_query($link);
 
-              $ch = curl_init();
+        $ch = curl_init();
 
-              curl_setopt($ch,CURLOPT_URL, $url);
-              curl_setopt($ch,CURLOPT_POST, count($link));
-              curl_setopt($ch,CURLOPT_POSTFIELDS, $query);
+        curl_setopt($ch,CURLOPT_URL, $url);
+        curl_setopt($ch,CURLOPT_POST, count($link));
+        curl_setopt($ch,CURLOPT_POSTFIELDS, $query);
 
-              curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
 
-              $result = curl_exec($ch);
+        $result = curl_exec($ch);
 
-            }
-          }
-        }
       }
     }
   }
 
-  die();
+  exit;
 }
 
 add_action( 'wp_ajax_smcu_sponsorship_balance', 'smcu_sponsorship_balance' );
