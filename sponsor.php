@@ -169,6 +169,7 @@ function smcu_sponsorship_purchase() {
 
       $data = array(
         'items' => $_REQUEST['cart']['items'],
+        'type' => 'MCU Sponsorship',
         'user' => array(
           'email' => $email,
           'name' => $receipt_name,
@@ -297,6 +298,7 @@ function smcu_link_sponsorship_purchase() {
 
       $data = array(
         'items' => $_REQUEST['cart']['items'],
+        'type' => 'Morning Chalk Up Sponsored Link',
         'user' => array(
           'email' => $email,
           'name' => $receipt_name,
@@ -319,6 +321,38 @@ function smcu_link_sponsorship_purchase() {
       curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
 
       $result = curl_exec($ch);
+
+      foreach ( $cart as $item ) {
+        if( have_rows( 'links', 'options' ) ) {
+          while( have_rows( 'links', 'options' ) ) {
+            the_row();
+            if( strtotime( get_sub_field( 'day' ) ) ==  strtotime( $item['start'] ) ) {
+              $link = array(
+                'user' => array(
+                  'email' => $email,
+                  'name' => $receipt_name,
+                ),
+                'ad_date' => strtotime( $item['start'] ),
+              );
+              
+              $url = 'http://data.morningchalkup.com/api/ads/reminder/link';
+
+              $query = http_build_query($link);
+
+              $ch = curl_init();
+
+              curl_setopt($ch,CURLOPT_URL, $url);
+              curl_setopt($ch,CURLOPT_POST, count($link));
+              curl_setopt($ch,CURLOPT_POSTFIELDS, $query);
+
+              curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+
+              $result = curl_exec($ch);
+
+            }
+          }
+        }
+      }
     }
   }
 
@@ -391,6 +425,7 @@ function smcu_sponsorship_balance() {
 
       $data = array(
         'items' => $items,
+        'type' => 'Morning Chalk Up Sponsorship',
         'user' => array(
           'email' => $email,
           'name' => $receipt_name,
