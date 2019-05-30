@@ -328,7 +328,7 @@ function smcu_link_sponsorship_purchase() {
             'email' => $email,
             'name' => $receipt_name,
           ),
-          'ad_date' => strtotime( $item['start'] ),
+          'ad_date' => $item['start'],
         );
         
         $url = 'http://data.morningchalkup.com/api/ads/reminder/link';
